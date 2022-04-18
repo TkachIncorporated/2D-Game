@@ -1,8 +1,13 @@
-use bevy::prelude::*;
+use bevy::{core::FixedTimestep, prelude::*};
+
+//Frames Imitation
+const TIME_STEP: f32 = 1.0 / 60.0;
 
 //States System for Pause & Play (TODO)
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
+    MainMenu,
+    Paused,
     Playing,
     GameOver,
 }
@@ -29,9 +34,24 @@ impl Size {
     }
 }
 
-//Main Hero
+//Main Hero Component
 #[derive(Component)]
 struct Death;
+
+//Weapon Component
+#[derive(Component)]
+struct RangedWeapon {
+    velocity: f32,
+    flip: bool,
+}
+impl RangedWeapon {
+    fn scythe(velocity: f32, flip: bool) -> Self {
+        Self {
+            velocity: velocity,
+            flip: flip,
+        }
+    }
+}
 
 fn main() {
     App::new()
@@ -42,6 +62,12 @@ fn main() {
             SystemSet::new().with_system(size_scaling),
         )
         .add_system(movement)
+        .add_system(weapon)
+        .add_system_set(
+            SystemSet::new()
+                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_system(apply_velocity),
+        )
         .run();
 }
 
@@ -56,6 +82,7 @@ fn size_scaling(mut q: Query<(&Size, &mut Transform)>) {
     }
 }
 
+//Doing spawning things with Death
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands
@@ -72,7 +99,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(Size::square(1.0));
 }
 
-//Doing aggressive things with Death
+//Doing aggressive things with Death (TODO)
 fn movement(
     keyboard_input: Res<Input<KeyCode>>,
     mut transform: Query<&mut Transform, With<Death>>,
@@ -94,5 +121,38 @@ fn movement(
     }
     if keyboard_input.pressed(KeyCode::Up) {
         position.translation.y += 2.;
+    }
+}
+
+//Doing deadly things by Death (TODO)
+fn weapon(
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    mut transform: Query<&Transform, With<Death>>,
+    mut sprite: Query<&mut Sprite, With<Death>>,
+) {
+    let position = transform.single_mut();
+    let renderer = sprite.single_mut();
+    let mut need_spawn = false;
+
+    if keyboard_input.pressed(KeyCode::Z) {
+        need_spawn = true;
+    }
+
+    if need_spawn {
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: asset_server.load("../Sprites/Slime.png"),
+                transform: *position,
+                ..default()
+            })
+            .insert(RangedWeapon::scythe(20.0, renderer.flip_x));
+    }
+}
+
+fn apply_velocity(mut query: Query<(&mut Transform, &RangedWeapon)>) {
+    if let Some((mut transform, head)) = query.iter_mut().next() {
+        transform.translation.x += head.velocity * head.flip as i32 as f32 * TIME_STEP;
     }
 }
