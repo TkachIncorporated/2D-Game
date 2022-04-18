@@ -18,7 +18,7 @@ struct Position {
     y: i32,
 }
 
-//Trying to make Square Collider
+//Trying to make Square Collider (TODO)
 #[derive(Component)]
 struct Size {
     width: f32,
@@ -53,21 +53,44 @@ impl RangedWeapon {
     }
 }
 
-fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins)
-        .add_startup_system(setup)
-        .add_system_set_to_stage(
-            CoreStage::PostUpdate,
-            SystemSet::new().with_system(size_scaling),
-        )
-        .add_system(movement)
-        .add_system(weapon)
-        .add_system_set(
+//Some Plugins for eyes comfort
+pub struct WeaponPlugin;
+impl Plugin for WeaponPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(weapon); //Will increase when the time comes
+    }
+}
+
+pub struct SetupPlugin;
+impl Plugin for SetupPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins(DefaultPlugins)
+            .add_startup_system(setup)
+            .add_system_set_to_stage(
+                CoreStage::PostUpdate,
+                SystemSet::new().with_system(size_scaling),
+            )
+            .add_system(bevy::input::system::exit_on_esc_system);
+    }
+}
+
+pub struct CharacterPlugin;
+impl Plugin for CharacterPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system_set(
             SystemSet::new()
                 .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
-                .with_system(apply_velocity),
-        )
+                .with_system(apply_velocity)
+                .with_system(movement),
+        );
+    }
+}
+
+fn main() {
+    App::new()
+        .add_plugin(SetupPlugin)
+        .add_plugin(CharacterPlugin)
+        .add_plugin(WeaponPlugin)
         .run();
 }
 
@@ -88,11 +111,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_server.load("../Sprites/Death.png"),
-            sprite: Sprite {
-                flip_x: true,
-                flip_y: false,
-                ..default()
-            },
             ..default()
         })
         .insert(Death)
@@ -136,23 +154,35 @@ fn weapon(
     let renderer = sprite.single_mut();
     let mut need_spawn = false;
 
-    if keyboard_input.pressed(KeyCode::Z) {
+    if keyboard_input.just_pressed(KeyCode::Z) {
         need_spawn = true;
     }
 
     if need_spawn {
         commands
             .spawn_bundle(SpriteBundle {
-                texture: asset_server.load("../Sprites/Slime.png"),
-                transform: *position,
+                texture: asset_server.load("../Sprites/WTFIsThis.png"),
+                transform: Transform {
+                    translation: Vec3::new(
+                        position.translation.x + (if renderer.flip_x { -1.0 } else { 1.0 }) * 100.0, //Targeting thingies
+                        position.translation.y,
+                        position.translation.z,
+                    ),
+                    scale: position.scale,
+                    ..default()
+                },
+                sprite: Sprite {
+                    flip_x: renderer.flip_x,
+                    ..default()
+                },
                 ..default()
             })
-            .insert(RangedWeapon::scythe(20.0, renderer.flip_x));
+            .insert(RangedWeapon::scythe(100.0, renderer.flip_x));
     }
 }
 
 fn apply_velocity(mut query: Query<(&mut Transform, &RangedWeapon)>) {
-    if let Some((mut transform, head)) = query.iter_mut().next() {
-        transform.translation.x += head.velocity * head.flip as i32 as f32 * TIME_STEP;
+    for (mut transform, head) in query.iter_mut() {
+        transform.translation.x += head.velocity * (if head.flip { -1.0 } else { 1.0 });
     }
 }
