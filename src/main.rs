@@ -1,14 +1,18 @@
 use bevy::{
     core::FixedTimestep,
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
     sprite::collide_aabb::{collide, Collision},
 };
+
+#[cfg(feature = "debug")]
+use bevy_inspector_egui::WorldInspectorPlugin;
 
 //Frames Imitation
 const TIME_STEP: f32 = 1.0 / 60.0;
 
 //States System for Pause & Play (TODO)
-#[derive(Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Eq, PartialEq, Hash)]
 enum GameState {
     MainMenu,
     Paused,
@@ -87,11 +91,35 @@ impl Plugin for CharactersPlugin {
 }
 
 fn main() {
-    App::new()
-        .add_plugin(SetupPlugin)
-        .add_plugin(CharactersPlugin)
-        .add_plugin(WeaponPlugin)
-        .run();
+    let mut app = App::new();
+
+    ////TODO
+    // app.add_plugin(SetupPlugin)
+    //     .add_plugin(LogDiagnosticsPlugin::default())
+    //     .add_plugin(FrameTimeDiagnosticsPlugin::default())
+    //     .add_plugin(CharactersPlugin)
+    //     .add_plugin(WeaponPlugin)
+    //     .add_plugins(DefaultPlugins);
+
+    app.insert_resource(WindowDescriptor {
+        title: "Mine Sweeper!".to_string(),
+        width: 700.,
+        height: 800.,
+        ..Default::default()
+    })
+    // Bevy default plugins
+    .add_plugins(DefaultPlugins);
+    #[cfg(feature = "debug")]
+    // Debug hierarchy inspector
+    app.add_plugin(WorldInspectorPlugin::new());
+    // // Startup system (cameras)
+    app.add_startup_system(camera_setup);
+    // // Run the app
+    app.run();
+}
+
+fn camera_setup(mut commands: Commands) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
 
 //Doing spawning things with Death
