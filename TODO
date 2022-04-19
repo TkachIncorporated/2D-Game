@@ -1,6 +1,14 @@
+Global Objectives:
 Grid Map System for Position Component
 Pause Menu & System Gameplay States
-Weapon System
+Physics System
+Tilemap System
+
+Local Objectives (Tomorrow):
+Found Bug on main.rs caused by local physics system (Rework PS)
+Deal with bevy::Texture (don't understand - probably task for Vovchik)
+Initialize new repository architecture
+Add some thingies
 
 For Vovchik:
-...
+Read about rapier2D bevy & some similar stuff

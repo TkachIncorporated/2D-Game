@@ -1,4 +1,8 @@
-use bevy::{core::FixedTimestep, prelude::*};
+use bevy::{
+    core::FixedTimestep,
+    prelude::*,
+    sprite::collide_aabb::{collide, Collision},
+};
 
 //Frames Imitation
 const TIME_STEP: f32 = 1.0 / 60.0;
@@ -11,27 +15,25 @@ enum GameState {
     Playing,
     GameOver,
 }
-//Position Component for Grid Map (TODO)
-#[derive(Component, Clone, Copy, PartialEq, Eq)]
-struct Position {
-    x: i32,
-    y: i32,
-}
 
-//Trying to make Square Collider (TODO)
+//Real Collider This Time
 #[derive(Component)]
-struct Size {
-    width: f32,
-    height: f32,
-}
+struct Collider;
 
-impl Size {
-    pub fn square(x: f32) -> Self {
-        Self {
-            width: x,
-            height: x,
-        }
-    }
+#[derive(Default)]
+struct CollisionEvent;
+
+//Ground Flag for Furute prikols
+#[derive(Component)]
+struct Ground;
+
+//Rigid-Body Component
+const G: f32 = -9.8;
+
+#[derive(Component)]
+struct RigidBody {
+    moveable: bool,
+    velocity: Vec2,
 }
 
 //Main Hero Component
@@ -66,21 +68,19 @@ impl Plugin for SetupPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(DefaultPlugins)
             .add_startup_system(setup)
-            .add_system_set_to_stage(
-                CoreStage::PostUpdate,
-                SystemSet::new().with_system(size_scaling),
-            )
             .add_system(bevy::input::system::exit_on_esc_system);
     }
 }
 
-pub struct CharacterPlugin;
-impl Plugin for CharacterPlugin {
+pub struct CharactersPlugin;
+impl Plugin for CharactersPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
+        app.add_event::<CollisionEvent>().add_system_set(
             SystemSet::new()
                 .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_system(check_for_collisions)
                 .with_system(apply_velocity)
+                .with_system(apply_physics.before(check_for_collisions))
                 .with_system(movement),
         );
     }
@@ -89,20 +89,9 @@ impl Plugin for CharacterPlugin {
 fn main() {
     App::new()
         .add_plugin(SetupPlugin)
-        .add_plugin(CharacterPlugin)
+        .add_plugin(CharactersPlugin)
         .add_plugin(WeaponPlugin)
         .run();
-}
-
-//Doing things with Death
-fn size_scaling(mut q: Query<(&Size, &mut Transform)>) {
-    for (sprite_size, mut transform) in q.iter_mut() {
-        transform.scale = Vec3::new(
-            sprite_size.width * 3 as f32,
-            sprite_size.height * 3 as f32,
-            1.0,
-        );
-    }
 }
 
 //Doing spawning things with Death
@@ -110,11 +99,43 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands
         .spawn_bundle(SpriteBundle {
-            texture: asset_server.load("../Sprites/Death.png"),
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 0.0),
+                scale: Vec3::new(50.0, 50.0, 1.0),
+                ..default()
+            },
+            sprite: Sprite {
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+            //texture: asset_server.load("../Sprites/Death.png"),
             ..default()
         })
         .insert(Death)
-        .insert(Size::square(1.0));
+        .insert(RigidBody {
+            moveable: true,
+            velocity: Vec2::new(0.0, G),
+        });
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            //texture: asset_server.load("../Sprites/TODO.png"),
+            transform: Transform {
+                translation: Vec3::new(0.0, -250.0, 0.0),
+                scale: (Vec3::new(10000.0, 30.0, 1.0)),
+                ..default()
+            },
+            sprite: Sprite {
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+            ..default()
+        })
+        .insert(RigidBody {
+            moveable: false,
+            velocity: Vec2::new(0.0, 0.0),
+        })
+        .insert(Collider);
 }
 
 //Doing aggressive things with Death (TODO)
@@ -127,18 +148,12 @@ fn movement(
     let mut renderer = sprite.single_mut();
 
     if keyboard_input.pressed(KeyCode::Left) {
-        position.translation.x -= 2.;
+        position.translation.x -= 5.0;
         renderer.flip_x = true;
     }
     if keyboard_input.pressed(KeyCode::Right) {
-        position.translation.x += 2.;
+        position.translation.x += 5.0;
         renderer.flip_x = false;
-    }
-    if keyboard_input.pressed(KeyCode::Down) {
-        position.translation.y -= 2.;
-    }
-    if keyboard_input.pressed(KeyCode::Up) {
-        position.translation.y += 2.;
     }
 }
 
@@ -184,5 +199,64 @@ fn weapon(
 fn apply_velocity(mut query: Query<(&mut Transform, &RangedWeapon)>) {
     for (mut transform, head) in query.iter_mut() {
         transform.translation.x += head.velocity * (if head.flip { -1.0 } else { 1.0 });
+    }
+}
+
+//Physics Immitation (TODO)
+fn apply_physics(
+    mut query: Query<(&mut Transform, &RigidBody)>,
+    mut collision_events: EventReader<CollisionEvent>,
+) {
+    for (mut transform, head) in query.iter_mut() {
+        if head.moveable {
+            if !collision_events.iter().next().is_some() {
+                transform.translation.y += head.velocity.y;
+            }
+        }
+    }
+}
+
+//Collision Check (TODO)
+fn check_for_collisions(
+    mut death_query: Query<(&mut RigidBody, &Transform), With<Death>>,
+    collider_query: Query<&Transform, With<Collider>>,
+    mut collision_events: EventWriter<CollisionEvent>,
+) {
+    let (mut rb, death_transform) = death_query.single_mut();
+    let death_size = death_transform.scale.truncate();
+
+    //Check collision with walls
+    for transform in collider_query.iter() {
+        let collision = collide(
+            death_transform.translation,
+            death_size,
+            transform.translation,
+            transform.scale.truncate(),
+        );
+
+        if let Some(collision) = collision {
+            collision_events.send_default();
+
+            let mut y_movement = true;
+            let mut x_movement = true;
+
+            match collision {
+                Collision::Left => x_movement = false,
+                Collision::Right => x_movement = false,
+                Collision::Top => y_movement = false,
+                Collision::Bottom => y_movement = false,
+                Collision::Inside => { /* do nothing */ }
+            }
+
+            if !y_movement {
+                rb.velocity.y = 0.0;
+            }
+
+            if !x_movement {
+                rb.velocity.x = 0.0;
+            }
+        } else {
+            rb.velocity.y = G;
+        }
     }
 }
