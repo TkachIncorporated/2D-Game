@@ -10,5 +10,8 @@ Deal with bevy::Texture (don't understand - probably task for Vovchik)
 Initialize new repository architecture (Almost Done)
 Add some thingies
 
+Make some Collider Impls
+Complete RigidBody, Collider Components
+
 For Vovchik:
 Read about rapier2D bevy & some similar stuff
