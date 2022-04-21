@@ -2,6 +2,7 @@ use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
 };
+use heron::prelude::*;
 use plugin::MainPlugin;
 
 #[cfg(feature = "debug")]
@@ -19,6 +20,8 @@ fn main() {
     let mut app = App::new();
 
     app.add_plugin(SetupPlugin)
+        .add_plugin(PhysicsPlugin::default())
+        .insert_resource(Gravity::from(Vec3::new(0.0, -9.81 * 3.0, 0.0)))
         .add_plugin(MainPlugin)
         .add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default());

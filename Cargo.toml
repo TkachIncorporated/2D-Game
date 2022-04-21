@@ -12,6 +12,7 @@ debug = ["plugin/debug", "bevy-inspector-egui"]
 [dependencies]
 bevy = { version = "0.7.0" }
 rand = "0.8.5"
+heron = { version = "3.0.0", features = ["2d"] }
 plugin = { path = "plugin" }
 
 bevy-inspector-egui = { version = "0.10", optional = true }
