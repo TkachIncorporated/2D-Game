@@ -3,18 +3,13 @@ use bevy_rapier2d::prelude::*;
 
 use crate::AppState;
 
-use super::{
-    assets_paths,
-    components::{Death, GameDirection, Jumper},
-    constants::CAMERA_SPEED_PER_SEC,
-    events::BulletFiredEvent,
-};
+use super::{assets_paths, components, constants, events};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<BulletFiredEvent>()
+        app.add_event::<events::BulletFiredEvent>()
             .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(setup.system()))
             .add_system_set(
                 SystemSet::on_update(AppState::InGame)
@@ -40,7 +35,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
         activation: RigidBodyActivation::cannot_sleep().into(),
         forces: RigidBodyForces {
-            gravity_scale: 3.,
+            gravity_scale: 50.,
             ..Default::default()
         }
         .into(),
@@ -49,6 +44,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let collider = ColliderBundle {
         shape: ColliderShape::round_cuboid(56. / 2., 72. / 2., 0.1).into(),
+        material: ColliderMaterial {
+            friction: 10.,
+            ..Default::default()
+        }
+        .into(),
         flags: ColliderFlags {
             active_events: ActiveEvents::CONTACT_EVENTS,
             ..Default::default()
@@ -71,24 +71,22 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert_bundle(rigid_body)
         .insert_bundle(collider)
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(Jumper {
-            jump_impulse: 100.0,
+        .insert(components::Death {
+            speed: constants::SPEED,
+            facing_direction: components::GameDirection::Right,
+            jump_impulse: constants::JUMP_FORCE,
             is_jumping: false,
-        })
-        .insert(Death {
-            speed: 100.0,
-            facing_direction: GameDirection::Right,
         });
 }
 
 pub fn fire_controller(
     keyboard_input: Res<Input<KeyCode>>,
-    mut send_fire_event: EventWriter<BulletFiredEvent>,
-    players: Query<(&Death, &RigidBodyPositionComponent), With<Death>>,
+    mut send_fire_event: EventWriter<events::BulletFiredEvent>,
+    players: Query<(&components::Death, &RigidBodyPositionComponent), With<components::Death>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Z) {
         for (player, position) in players.iter() {
-            let event = BulletFiredEvent {
+            let event = events::BulletFiredEvent {
                 position: Vec2::new(
                     position.position.translation.x,
                     position.position.translation.y,
@@ -104,45 +102,56 @@ pub fn fire_controller(
 
 pub fn player_controller(
     keyboard_input: Res<Input<KeyCode>>,
-    mut players: Query<((&mut RigidBodyVelocityComponent, &mut Sprite), &mut Death)>,
+    mut players: Query<(
+        (&mut RigidBodyVelocityComponent, &mut Sprite),
+        &mut components::Death,
+    )>,
 ) {
     for ((mut velocity, mut sprite), mut player) in players.iter_mut() {
         if keyboard_input.pressed(KeyCode::Left) {
             velocity.linvel = Vec2::new(-player.speed, velocity.linvel.y).into();
             sprite.flip_x = true;
-            player.facing_direction = GameDirection::Left
+            player.facing_direction = components::GameDirection::Left
         }
         if keyboard_input.pressed(KeyCode::Right) {
             velocity.linvel = Vec2::new(player.speed, velocity.linvel.y).into();
             sprite.flip_x = false;
-            player.facing_direction = GameDirection::Right
+            player.facing_direction = components::GameDirection::Right
         }
     }
 }
 
 fn player_jumps(
     keyboard_input: Res<Input<KeyCode>>,
-    mut players: Query<(&mut Jumper, &mut RigidBodyVelocityComponent), With<Death>>,
+    mut players: Query<
+        (&mut components::Death, &mut RigidBodyVelocityComponent),
+        With<components::Death>,
+    >,
 ) {
-    for (jumper, mut velocity) in players.iter_mut() {
-        if keyboard_input.pressed(KeyCode::Up) {
-            velocity.linvel = Vec2::new(0., jumper.jump_impulse).into();
+    for (mut death, mut velocity) in players.iter_mut() {
+        if keyboard_input.pressed(KeyCode::Up) && !death.is_jumping {
+            velocity.linvel = Vec2::new(0., death.jump_impulse).into();
+            death.is_jumping = true
         }
     }
 }
 
 pub fn jump_reset(
-    mut query: Query<(Entity, &mut Jumper)>,
+    mut query: Query<(Entity, &mut components::Death)>,
     mut contact_events: EventReader<ContactEvent>,
 ) {
     for contact_event in contact_events.iter() {
-        for (entity, mut jumper) in query.iter_mut() {
-            set_jumping_false_if_touching_floor(entity, &mut jumper, contact_event);
+        for (entity, mut death) in query.iter_mut() {
+            set_jumping_false_if_touching_floor(entity, &mut death, contact_event);
         }
     }
 }
 
-fn set_jumping_false_if_touching_floor(entity: Entity, jumper: &mut Jumper, event: &ContactEvent) {
+fn set_jumping_false_if_touching_floor(
+    entity: Entity,
+    jumper: &mut components::Death,
+    event: &ContactEvent,
+) {
     if let ContactEvent::Started(h1, h2) = event {
         if h1.entity() == entity || h2.entity() == entity {
             jumper.is_jumping = false
@@ -153,9 +162,9 @@ fn set_jumping_false_if_touching_floor(entity: Entity, jumper: &mut Jumper, even
 fn player_camera_control(
     kb: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut query: Query<&mut OrthographicProjection, With<Death>>,
+    mut query: Query<&mut OrthographicProjection, With<components::Death>>,
 ) {
-    let dist = CAMERA_SPEED_PER_SEC * time.delta().as_secs_f32();
+    let dist = constants::CAMERA_SPEED_PER_SEC * time.delta().as_secs_f32();
 
     for mut projection in query.iter_mut() {
         let mut log_scale = projection.scale.ln();

@@ -1,19 +1,15 @@
 use bevy::{core::FixedTimestep, log, prelude::*};
 use bevy_rapier2d::prelude::*;
 
-use crate::data::{assets_paths, constants::TIME_STEP};
-
-use super::{
-    components::{GameDirection, RangedWeapon},
-    events::BulletFiredEvent,
-};
+use super::{components, events};
+use crate::data::{assets_paths, constants};
 
 pub struct WeaponPlugin;
 
 impl Plugin for WeaponPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::new().with_run_criteria(FixedTimestep::step(TIME_STEP as f64)),
+            SystemSet::new().with_run_criteria(FixedTimestep::step(constants::TIME_STEP as f64)),
         )
         .add_system(weapon)
         .add_system(destroy_bullet_on_contact);
@@ -30,7 +26,7 @@ impl Plugin for WeaponPlugin {
 fn weapon(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut bullet_fired_events: EventReader<BulletFiredEvent>,
+    mut bullet_fired_events: EventReader<events::BulletFiredEvent>,
 ) {
     for event in bullet_fired_events.iter() {
         spawn_bullet(&mut commands, asset_server.clone(), event)
@@ -40,15 +36,15 @@ fn weapon(
 pub fn spawn_bullet(
     commands: &mut Commands,
     asset_server: AssetServer,
-    options: &BulletFiredEvent,
+    options: &events::BulletFiredEvent,
 ) {
     let speed = match options.direction {
-        GameDirection::Left => -140.0,
-        _ => 140.0,
+        components::GameDirection::Left => -constants::BULLET_SPEED,
+        _ => constants::BULLET_SPEED,
     };
 
     let x = match options.direction {
-        GameDirection::Left => options.position.x - 70.,
+        components::GameDirection::Left => options.position.x - 70.,
         _ => options.position.x + 70.,
     };
     let rigid_body = RigidBodyBundle {
@@ -92,14 +88,14 @@ pub fn spawn_bullet(
         .insert_bundle(rigid_body)
         .insert_bundle(collider)
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(RangedWeapon::scythe(100., false));
+        .insert(components::RangedWeapon::scythe(100., false));
 
     log::info!("Bullet Spawned!");
 }
 
 pub fn destroy_bullet_on_contact(
     mut commands: Commands,
-    bullets: Query<Entity, With<RangedWeapon>>,
+    bullets: Query<Entity, With<components::RangedWeapon>>,
     mut contact_events: EventReader<ContactEvent>,
 ) {
     for contact_event in contact_events.iter() {

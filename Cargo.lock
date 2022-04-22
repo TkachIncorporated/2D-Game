@@ -2570,7 +2570,6 @@ dependencies = [
  "bevy_rapier2d",
  "getrandom",
  "rand",
- "wasm-bindgen",
 ]
 
 [[package]]
