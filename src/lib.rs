@@ -25,12 +25,13 @@ pub fn run() {
         width: 640.0,
         height: 400.0,
         mode: WindowMode::Windowed,
+        resizable: false,
         ..Default::default()
     })
     .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
     .add_plugins(DefaultPlugins)
     .add_state(AppState::InGame)
-    .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
+    .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
     .add_plugin(GamePlugin)
     .run();
 }
