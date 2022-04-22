@@ -1,3 +1,4 @@
+mod assets_paths;
 pub mod components;
 pub mod constants;
 pub mod events;
@@ -27,7 +28,7 @@ impl Plugin for GamePlugin {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn_bundle(SpriteBundle {
-            texture: asset_server.load("sprites/TODO.png"),
+            texture: asset_server.load(assets_paths::sprites::TODO),
             transform: Transform {
                 translation: Vec3::new(0., -250., 0.),
                 scale: Vec3::new(3., 3., 1.),

@@ -1,7 +1,7 @@
 use bevy::{core::FixedTimestep, log, prelude::*};
 use bevy_rapier2d::prelude::*;
 
-use crate::data::constants::TIME_STEP;
+use crate::data::{assets_paths, constants::TIME_STEP};
 
 use super::{
     components::{GameDirection, RangedWeapon},
@@ -79,7 +79,7 @@ pub fn spawn_bullet(
     };
 
     let sprite = SpriteBundle {
-        texture: asset_server.load("sprites/WTFIsThis.png"),
+        texture: asset_server.load(assets_paths::sprites::WTF_IS_THIS),
         sprite: Sprite {
             custom_size: Vec2::new(50., 20.).into(),
             ..Default::default()

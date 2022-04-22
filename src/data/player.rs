@@ -4,6 +4,7 @@ use bevy_rapier2d::prelude::*;
 use crate::AppState;
 
 use super::{
+    assets_paths,
     components::{Death, GameDirection, Jumper},
     constants::CAMERA_SPEED_PER_SEC,
     events::BulletFiredEvent,
@@ -64,7 +65,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 translation: Vec3::new(0.0, 0.0, 0.0),
                 ..Default::default()
             },
-            texture: asset_server.load("sprites/Death.png"),
+            texture: asset_server.load(assets_paths::sprites::DEATH),
             ..Default::default()
         })
         .insert_bundle(rigid_body)
