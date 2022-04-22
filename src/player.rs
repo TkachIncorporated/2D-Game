@@ -1,7 +1,12 @@
-use bevy::{core::FixedTimestep, log, prelude::*};
-use heron::prelude::*;
+mod components;
 
-use crate::{components::death::Death, CAMERA_SPEED_PER_SEC, SPEED, TIME_STEP};
+use bevy::{core::FixedTimestep, log, prelude::*};
+use heron::{prelude::*, rapier_plugin::rapier2d::prelude::ContactEvent};
+
+use crate::{
+    components::{death::Death, jumper::Jumper, layers::Layer},
+    CAMERA_SPEED_PER_SEC, SPEED, TIME_STEP,
+};
 
 pub struct PlayerPlugin;
 
@@ -13,7 +18,9 @@ impl Plugin for PlayerPlugin {
                 .with_system(movement)
                 .with_system(player_camera_control),
         )
-        .add_startup_system(setup);
+        .add_startup_system(setup)
+        .add_system(player_jumps)
+        .add_system(print_size);
 
         // #[cfg(feature = "debug")]
         // {
@@ -24,7 +31,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, asset: Res<Assets<Image>>) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     //let img = asset.get(asset_server.load("../assets/sprites/Death.png"));
     commands
         .spawn()
@@ -39,11 +46,15 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, asset: Res<Asse
         })
         .insert(RigidBody::Dynamic)
         .insert(CollisionShape::Cuboid {
-            half_extends: Vec3::new(28.0, 36.0, 1.0), //TODO IDK how to get scales of image
+            half_extends: Vec3::new(56.0 / 2.0, 72.0 / 2.0, 0.0), //TODO IDK how to get scales of image
             border_radius: Some(0.0),
         })
         .insert(Velocity::default())
         .insert(RotationConstraints::lock())
+        .insert(Jumper {
+            jump_impulse: 1000.0,
+            is_jumping: false,
+        })
         .insert(Death);
 
     commands
@@ -51,14 +62,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, asset: Res<Asse
             texture: asset_server.load("../assets/sprites/TODO.png"),
             transform: Transform {
                 translation: Vec3::new(0.0, -250.0, 0.0),
-                scale: (Vec3::new(3.0, 3.0, 1.0)),
+                scale: Vec3::new(3.0, 3.0, 1.0),
                 ..default()
             },
             ..default()
         })
         .insert(RigidBody::Static)
         .insert(CollisionShape::Cuboid {
-            half_extends: Vec3::new(220.0, 45.0, 1.0),
+            half_extends: Vec3::new(300.0 / 2.0, 75.0 / 2.0, 1.0),
             border_radius: Some(0.0),
         });
 
@@ -70,16 +81,39 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, asset: Res<Asse
             },
             transform: Transform {
                 translation: Vec3::new(250.0, 0.0, 0.0),
-                scale: (Vec3::new(30.0, 500.0, 1.0)),
+                scale: Vec3::new(30.0, 500.0, 1.0),
                 ..default()
             },
             ..default()
         })
         .insert(RigidBody::Static)
         .insert(CollisionShape::Cuboid {
-            half_extends: Vec3::new(30.0, 500.0, 1.0),
-            border_radius: Some(0.0),
-        });
+            half_extends: Vec3::new(30.0 / 2.0, 500.0 / 2.0, 1.0),
+            border_radius: None,
+        })
+        .insert(CollisionLayers::new(Layer::Enemy, Layer::Bullet));
+}
+
+fn print_size(
+    query: Query<(&Sprite, &Transform, Option<&Handle<Image>>)>,
+    images: Res<Assets<Image>>,
+) {
+    info!("sizes:");
+
+    for (sprite, t, opt_handle) in query.iter() {
+        let size = if let Some(custom_size) = sprite.custom_size {
+            custom_size
+        } else if let Some(image) = opt_handle.map(|handle| images.get(handle)).flatten() {
+            Vec2::new(
+                image.texture_descriptor.size.width as f32,
+                image.texture_descriptor.size.height as f32,
+            )
+        } else {
+            Vec2::new(1.0, 1.0)
+        };
+
+        info!("{:?}", size * t.scale.truncate());
+    }
 }
 
 pub fn movement(
@@ -102,6 +136,37 @@ pub fn movement(
         velocity.linear = target_velocity;
     }
 }
+
+fn player_jumps(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut players: Query<(&mut Jumper, &mut Velocity), With<Death>>,
+) {
+    for (mut jumper, mut velocity) in players.iter_mut() {
+        if keyboard_input.pressed(KeyCode::Up) && !jumper.is_jumping {
+            velocity.linear = Vec3::new(0.0, jumper.jump_impulse, 1.0);
+            jumper.is_jumping = true
+        }
+    }
+}
+
+pub fn jump_reset(
+    mut query: Query<(Entity, &mut Jumper)>,
+    mut contact_events: EventReader<ContactEvent>,
+) {
+    for contact_event in contact_events.iter() {
+        for (entity, mut jumper) in query.iter_mut() {
+            set_jumping_false_if_touching_floor(entity, &mut jumper, contact_event);
+        }
+    }
+}
+
+// fn set_jumping_false_if_touching_floor(entity: Entity, jumper: &mut Jumper, event: &ContactEvent) {
+//     if let ContactEvent::Started(h1, h2) = event {
+//         if h1.entity() == entity || h2.entity() == entity {
+//             jumper.is_jumping = false
+//         }
+//     }
+// }
 
 fn player_camera_control(
     kb: Res<Input<KeyCode>>,
