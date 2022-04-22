@@ -64,7 +64,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 translation: Vec3::new(0.0, 0.0, 0.0),
                 ..Default::default()
             },
-            texture: asset_server.load("../assets/sprites/Death.png"),
+            texture: asset_server.load("sprites/Death.png"),
             ..Default::default()
         })
         .insert_bundle(rigid_body)

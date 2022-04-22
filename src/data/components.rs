@@ -27,8 +27,8 @@ pub struct RangedWeapon {
 impl RangedWeapon {
     pub fn scythe(range: f32, flip: bool) -> Self {
         Self {
-            range: range,
-            flip: flip,
+            range,
+            flip,
         }
     }
 }

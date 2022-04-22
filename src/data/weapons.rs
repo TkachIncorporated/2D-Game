@@ -79,7 +79,7 @@ pub fn spawn_bullet(
     };
 
     let sprite = SpriteBundle {
-        texture: asset_server.load("../assets/sprites/WTFIsThis.png"),
+        texture: asset_server.load("sprites/WTFIsThis.png"),
         sprite: Sprite {
             custom_size: Vec2::new(50., 20.).into(),
             ..Default::default()
