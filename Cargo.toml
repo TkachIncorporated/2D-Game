@@ -9,8 +9,6 @@ wasm-bindgen = "0.2"
 bevy_rapier2d = { version = "0.12.1", features = ["wasm-bindgen"] }
 rand = "0.8.4"
 getrandom = { version = "0.2", features = ["js"] }
-bevy_ecs_ldtk = "0.2.0"
-bevy_ecs_tilemap = "0.5"
-bevy = { version = "0.6", default-features = false }
+bevy = { version = "0.6" }
 
 bevy-inspector-egui = { version = "0.10", optional = true }

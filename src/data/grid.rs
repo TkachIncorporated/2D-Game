@@ -1,38 +1,38 @@
-use bevy::{log, prelude::*};
-use bevy_ecs_ldtk::prelude::*;
+// use bevy::{log, prelude::*};
+// use bevy_ecs_ldtk::prelude::*;
 
-pub struct GridPlugin;
+// pub struct GridPlugin;
 
-impl Plugin for GridPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(LdtkPlugin)
-            .add_startup_system(setup)
-            //.add_system(process_my_entity) //TODO
-            .insert_resource(LevelSelection::Index(0));
+// impl Plugin for GridPlugin {
+//     fn build(&self, app: &mut App) {
+//         app.add_plugin(LdtkPlugin)
+//             .add_startup_system(setup)
+//             //.add_system(process_my_entity) //TODO
+//             .insert_resource(LevelSelection::Index(0));
 
-        // #[cfg(feature = "debug")]
-        // {
-        //     app.register_inspectable::<CollisionEvent>();
-        // }
+//         // #[cfg(feature = "debug")]
+//         // {
+//         //     app.register_inspectable::<CollisionEvent>();
+//         // }
 
-        log::info!("Grid Build Complete!");
-    }
-}
+//         log::info!("Grid Build Complete!");
+//     }
+// }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+// fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+//     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-    commands.spawn_bundle(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("my_project.ldtk"),
-        ..Default::default()
-    });
-}
+//     commands.spawn_bundle(LdtkWorldBundle {
+//         ldtk_handle: asset_server.load("my_project.ldtk"),
+//         ..Default::default()
+//     });
+// }
 
-#[derive(Default, Component)]
-struct ComponentA;
+// #[derive(Default, Component)]
+// struct ComponentA;
 
-#[derive(Default, Component)]
-struct ComponentB;
+// #[derive(Default, Component)]
+// struct ComponentB;
 //TODO
 // fn process_my_entity(
 //     mut commands: Commands,

@@ -11,7 +11,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::AppState;
 
-use self::{grid::GridPlugin, player::PlayerPlugin, weapons::WeaponPlugin};
+use self::{player::PlayerPlugin, weapons::WeaponPlugin};
 
 pub struct GamePlugin;
 
@@ -20,7 +20,6 @@ impl Plugin for GamePlugin {
         app.add_system_set(SystemSet::on_enter(AppState::InGame))
             .add_plugin(PlayerPlugin)
             .add_plugin(WeaponPlugin)
-            .add_plugin(GridPlugin)
             .add_startup_system(setup.system());
     }
 }
