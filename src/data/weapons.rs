@@ -27,7 +27,6 @@ impl Plugin for WeaponPlugin {
     }
 }
 
-//TODO Doing deadly things by Death
 fn weapon(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -44,13 +43,13 @@ pub fn spawn_bullet(
     options: &BulletFiredEvent,
 ) {
     let speed = match options.direction {
-        GameDirection::Left => -14.0,
-        _ => 14.0,
+        GameDirection::Left => -140.0,
+        _ => 140.0,
     };
 
     let x = match options.direction {
-        GameDirection::Left => options.position.x - 1.,
-        _ => options.position.x + 1.,
+        GameDirection::Left => options.position.x - 70.,
+        _ => options.position.x + 70.,
     };
     let rigid_body = RigidBodyBundle {
         position: Vec2::new(x, options.position.y).into(),
@@ -82,7 +81,7 @@ pub fn spawn_bullet(
     let sprite = SpriteBundle {
         texture: asset_server.load("../assets/sprites/WTFIsThis.png"),
         sprite: Sprite {
-            custom_size: Vec2::new(0.5, 0.1).into(),
+            custom_size: Vec2::new(50., 20.).into(),
             ..Default::default()
         },
         ..Default::default()
@@ -94,6 +93,8 @@ pub fn spawn_bullet(
         .insert_bundle(collider)
         .insert(RigidBodyPositionSync::Discrete)
         .insert(RangedWeapon::scythe(100., false));
+
+    log::info!("Bullet Spawned!");
 }
 
 pub fn destroy_bullet_on_contact(
@@ -106,6 +107,8 @@ pub fn destroy_bullet_on_contact(
             for bullet in bullets.iter() {
                 if h1.entity() == bullet || h2.entity() == bullet {
                     commands.entity(bullet).despawn_recursive();
+
+                    log::info!("Bullet Destroyed!");
                 }
             }
         }
