@@ -3,6 +3,7 @@ mod components;
 mod constants;
 mod events;
 mod grid;
+mod light;
 mod menu;
 mod player;
 mod weapons;
@@ -13,7 +14,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::AppState;
 
-use self::{player::PlayerPlugin, weapons::WeaponPlugin};
+use self::{light::LightPlugin, player::PlayerPlugin, weapons::WeaponPlugin};
 
 pub struct GamePlugin;
 
@@ -24,6 +25,7 @@ impl Plugin for GamePlugin {
                 .with_system(setup.system())
                 .with_system(start_background_audio.system()),
         )
+        .add_plugin(LightPlugin)
         .add_plugin(AudioPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(WeaponPlugin);

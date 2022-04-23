@@ -59,7 +59,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands
         .spawn()
-        .insert_bundle(OrthographicCameraBundle::new_2d())
+        //.insert_bundle(OrthographicCameraBundle::new_3d())
         .insert_bundle(SpriteBundle {
             transform: Transform {
                 translation: Vec3::new(0., 0., 0.),
@@ -68,15 +68,17 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             texture: asset_server.load(assets_paths::sprites::DEATH),
             ..Default::default()
         })
-        .insert_bundle(rigid_body)
-        .insert_bundle(collider)
-        .insert(RigidBodyPositionSync::Discrete)
+        // .insert_bundle(rigid_body)
+        // .insert_bundle(collider)
+        // .insert(RigidBodyPositionSync::Discrete)
         .insert(components::Death {
             speed: constants::SPEED,
             facing_direction: components::GameDirection::Right,
             jump_impulse: constants::JUMP_FORCE,
             is_jumping: false,
         });
+
+  
 }
 
 pub fn fire_controller(
