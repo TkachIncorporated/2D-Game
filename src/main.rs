@@ -2,7 +2,6 @@ mod data;
 
 use bevy::{prelude::*, window::WindowMode};
 use bevy_rapier2d::physics::{NoUserData, RapierPhysicsPlugin};
-use data::GamePlugin;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum AppState {
@@ -15,11 +14,8 @@ pub enum AppState {
 fn main() {
     let mut app = App::new();
 
-    #[cfg(target_arch = "wasm32")]
-    app.add_plugin(bevy_webgl2::WebGL2Plugin);
-
     app.insert_resource(WindowDescriptor {
-        title: "Platformer!".to_string(),
+        title: "Death".to_string(),
         width: 640.0,
         height: 400.0,
         mode: WindowMode::Windowed,
@@ -27,8 +23,9 @@ fn main() {
     })
     .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
     .add_plugins(DefaultPlugins)
-    .add_state(AppState::InGame)
+    .add_state(AppState::MainMenu)
     .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
-    .add_plugin(GamePlugin)
+    .add_plugin(data::MenuPlugin)
+    .add_plugin(data::GamePlugin)
     .run();
 }

@@ -11,3 +11,7 @@ pub mod sounds {
     pub const FIREBALL: &str = "sounds/Fireball.wav";
     pub const WANDERING: &str = "sounds/Wandering.wav";
 }
+
+pub mod fonts {
+    pub const TICKETING: &str = "fonts/Ticketing.ttf";
+}

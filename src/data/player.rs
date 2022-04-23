@@ -1,4 +1,5 @@
 use bevy::{log, prelude::*};
+use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use crate::AppState;
@@ -31,7 +32,6 @@ impl Plugin for PlayerPlugin {
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let rigid_body = RigidBodyBundle {
-        position: Vec2::new(0., 2.).into(),
         mass_properties: RigidBodyMassPropsFlags::ROTATION_LOCKED.into(),
         activation: RigidBodyActivation::cannot_sleep().into(),
         forces: RigidBodyForces {
@@ -43,7 +43,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
 
     let collider = ColliderBundle {
-        shape: ColliderShape::round_cuboid(56. / 2., 72. / 2., 0.1).into(),
+        shape: ColliderShape::round_cuboid(56., 72., 0.1).into(),
         material: ColliderMaterial {
             friction: 10.,
             ..Default::default()
@@ -62,7 +62,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert_bundle(OrthographicCameraBundle::new_2d())
         .insert_bundle(SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 0.0),
+                translation: Vec3::new(0., 0., 0.),
                 ..Default::default()
             },
             texture: asset_server.load(assets_paths::sprites::DEATH),
@@ -83,8 +83,12 @@ pub fn fire_controller(
     keyboard_input: Res<Input<KeyCode>>,
     mut send_fire_event: EventWriter<events::BulletFiredEvent>,
     players: Query<(&components::Death, &RigidBodyPositionComponent), With<components::Death>>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Z) {
+        let sound = asset_server.load(assets_paths::sounds::FIREBALL);
+
         for (player, position) in players.iter() {
             let event = events::BulletFiredEvent {
                 position: Vec2::new(
@@ -95,6 +99,9 @@ pub fn fire_controller(
             };
             send_fire_event.send(event);
         }
+
+        audio.set_volume(0.5);
+        audio.play(sound);
 
         log::info!("Request for bullet sended!");
     }

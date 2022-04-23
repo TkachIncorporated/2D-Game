@@ -1,18 +1,22 @@
-use bevy::{core::FixedTimestep, log, prelude::*};
+use bevy::{log, prelude::*};
+use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::{components, events};
-use crate::data::{assets_paths, constants};
+use crate::{
+    data::{assets_paths, constants},
+    AppState,
+};
 
 pub struct WeaponPlugin;
 
 impl Plugin for WeaponPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::new().with_run_criteria(FixedTimestep::step(constants::TIME_STEP as f64)),
-        )
-        .add_system(weapon)
-        .add_system(destroy_bullet_on_contact);
+            SystemSet::on_update(AppState::InGame)
+                .with_system(weapon.system())
+                .with_system(destroy_bullet_on_contact.system()),
+        );
 
         // #[cfg(feature = "debug")]
         // {
@@ -47,6 +51,12 @@ pub fn spawn_bullet(
         components::GameDirection::Left => options.position.x - 70.,
         _ => options.position.x + 70.,
     };
+
+    let flip = match options.direction {
+        components::GameDirection::Left => true,
+        _ => false,
+    };
+
     let rigid_body = RigidBodyBundle {
         position: Vec2::new(x, options.position.y).into(),
         velocity: RigidBodyVelocity {
@@ -65,7 +75,7 @@ pub fn spawn_bullet(
     };
 
     let collider = ColliderBundle {
-        shape: ColliderShape::cuboid(0.25, 0.05).into(),
+        shape: ColliderShape::cuboid(23. / 2., 13. / 2.).into(),
         flags: ColliderFlags {
             active_events: ActiveEvents::CONTACT_EVENTS,
             ..Default::default()
@@ -77,7 +87,7 @@ pub fn spawn_bullet(
     let sprite = SpriteBundle {
         texture: asset_server.load(assets_paths::sprites::WTF_IS_THIS),
         sprite: Sprite {
-            custom_size: Vec2::new(50., 20.).into(),
+            flip_x: flip,
             ..Default::default()
         },
         ..Default::default()
@@ -88,7 +98,7 @@ pub fn spawn_bullet(
         .insert_bundle(rigid_body)
         .insert_bundle(collider)
         .insert(RigidBodyPositionSync::Discrete)
-        .insert(components::RangedWeapon::scythe(100., false));
+        .insert(components::RangedWeapon::scythe(100.));
 
     log::info!("Bullet Spawned!");
 }
@@ -97,12 +107,18 @@ pub fn destroy_bullet_on_contact(
     mut commands: Commands,
     bullets: Query<Entity, With<components::RangedWeapon>>,
     mut contact_events: EventReader<ContactEvent>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
 ) {
     for contact_event in contact_events.iter() {
         if let ContactEvent::Started(h1, h2) = contact_event {
             for bullet in bullets.iter() {
                 if h1.entity() == bullet || h2.entity() == bullet {
+                    let sound = asset_server.load(assets_paths::sounds::FIREBALL_WALL);
                     commands.entity(bullet).despawn_recursive();
+
+                    audio.set_volume(0.5);
+                    audio.play(sound);
 
                     log::info!("Bullet Destroyed!");
                 }
