@@ -43,7 +43,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
 
     let collider = ColliderBundle {
-        shape: ColliderShape::round_cuboid(56., 72., 0.1).into(),
+        shape: ColliderShape::round_cuboid(56. / 2., 72. / 2., 0.1).into(),
         material: ColliderMaterial {
             friction: 10.,
             ..Default::default()

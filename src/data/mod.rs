@@ -130,7 +130,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             texture: asset_server.load(assets_paths::sprites::TODO),
             transform: Transform {
                 translation: Vec3::new(0., -250., 0.),
-                scale: Vec3::new(3., 3., 1.),
                 ..Default::default()
             },
             ..Default::default()
@@ -141,7 +140,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..Default::default()
         })
         .insert_bundle(ColliderBundle {
-            shape: ColliderShape::round_cuboid(200., 22., 0.1).into(),
+            shape: ColliderShape::round_cuboid(220. / 2., 22. / 2., 0.1).into(),
             flags: ColliderFlags {
                 active_events: ActiveEvents::CONTACT_EVENTS,
                 ..Default::default()
@@ -169,7 +168,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..Default::default()
         })
         .insert_bundle(ColliderBundle {
-            shape: ColliderShape::round_cuboid(30., 500., 0.1).into(),
+            shape: ColliderShape::round_cuboid(30. / 2., 500. / 2., 0.1).into(),
             flags: ColliderFlags {
                 active_events: ActiveEvents::CONTACT_EVENTS,
                 ..Default::default()
