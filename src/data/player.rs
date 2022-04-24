@@ -11,9 +11,9 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<events::BulletFiredEvent>()
-            .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(setup.system()))
+            .add_system_set(SystemSet::on_enter(AppState::MainTest).with_system(setup.system()))
             .add_system_set(
-                SystemSet::on_update(AppState::InGame)
+                SystemSet::on_update(AppState::MainTest)
                     .with_system(player_jumps.system())
                     .with_system(player_controller.system())
                     .with_system(player_camera_control.system())
