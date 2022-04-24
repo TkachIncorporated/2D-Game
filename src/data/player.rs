@@ -11,9 +11,9 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<events::BulletFiredEvent>()
-            .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(setup.system()))
+            .add_system_set(SystemSet::on_enter(AppState::MainTest).with_system(setup.system()))
             .add_system_set(
-                SystemSet::on_update(AppState::InGame)
+                SystemSet::on_update(AppState::MainTest)
                     .with_system(player_jumps.system())
                     .with_system(player_controller.system())
                     .with_system(player_camera_control.system())
@@ -59,7 +59,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands
         .spawn()
-        //.insert_bundle(OrthographicCameraBundle::new_3d())
+        .insert_bundle(OrthographicCameraBundle::new_2d())
         .insert_bundle(SpriteBundle {
             transform: Transform {
                 translation: Vec3::new(0., 0., 0.),
@@ -68,17 +68,15 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             texture: asset_server.load(assets_paths::sprites::DEATH),
             ..Default::default()
         })
-        // .insert_bundle(rigid_body)
-        // .insert_bundle(collider)
-        // .insert(RigidBodyPositionSync::Discrete)
+        .insert_bundle(rigid_body)
+        .insert_bundle(collider)
+        .insert(RigidBodyPositionSync::Discrete)
         .insert(components::Death {
             speed: constants::SPEED,
             facing_direction: components::GameDirection::Right,
             jump_impulse: constants::JUMP_FORCE,
             is_jumping: false,
         });
-
-  
 }
 
 pub fn fire_controller(

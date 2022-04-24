@@ -13,7 +13,7 @@ pub struct WeaponPlugin;
 impl Plugin for WeaponPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_update(AppState::InGame)
+            SystemSet::on_update(AppState::MainTest)
                 .with_system(weapon.system())
                 .with_system(destroy_bullet_on_contact.system()),
         );

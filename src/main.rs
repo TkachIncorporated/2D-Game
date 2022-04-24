@@ -6,9 +6,10 @@ use bevy_rapier2d::physics::{NoUserData, RapierPhysicsPlugin};
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum AppState {
     MainMenu,
-    InGame,
+    LevelSelectMenu,
+    MainTest,
+    LightTest,
     GameOver,
-    BetweenLevels,
 }
 
 fn main() {
@@ -22,10 +23,9 @@ fn main() {
         resizable: false,
         ..Default::default()
     })
-    .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-    .add_plugins(DefaultPlugins)
     .add_state(AppState::MainMenu)
-    // .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+    .add_plugins(DefaultPlugins)
+    .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
     .add_plugin(data::MenuPlugin)
     .add_plugin(data::GamePlugin)
     .run();

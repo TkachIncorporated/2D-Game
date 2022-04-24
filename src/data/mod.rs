@@ -3,39 +3,31 @@ mod components;
 mod constants;
 mod events;
 mod grid;
-mod light;
 mod menu;
 mod player;
 mod weapons;
 
-use bevy::{app::AppExit, prelude::*};
+use bevy::{app::AppExit, log, prelude::*};
 use bevy_kira_audio::{Audio, AudioPlugin};
 use bevy_rapier2d::prelude::*;
 
 use crate::AppState;
 
-use self::{light::LightPlugin, player::PlayerPlugin, weapons::WeaponPlugin};
+use self::{player::PlayerPlugin, weapons::WeaponPlugin};
 
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_enter(AppState::InGame)
-                .with_system(setup.system())
-                .with_system(start_background_audio.system()),
+            SystemSet::on_enter(AppState::MainTest)
+                .with_system(setup)
+                .with_system(start_background_audio),
         )
-        .add_plugin(LightPlugin)
         .add_plugin(AudioPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(WeaponPlugin);
     }
-}
-
-#[derive(Component)]
-enum MenuButton {
-    Play,
-    Quit,
 }
 
 pub struct MenuPlugin;
@@ -44,13 +36,26 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<self::menu::MenuMaterials>()
             .add_system(self::menu::button_system.system())
-            .add_system(button_press_system.system())
+            .add_system(button_press_system_main_menu.system())
+            .add_system(button_press_system_level_menu.system())
             .add_system_set(
                 SystemSet::on_enter(AppState::MainMenu)
                     .with_system(cleanup.system())
                     .with_system(setup_main_menu.system()),
             )
-            .add_system_set(SystemSet::on_exit(AppState::MainMenu).with_system(cleanup.system()));
+            .add_system_set(SystemSet::on_exit(AppState::MainMenu).with_system(cleanup.system()))
+            .add_system_set(
+                SystemSet::on_enter(AppState::LevelSelectMenu)
+                    .with_system(cleanup.system())
+                    .with_system(setup_select_menu.system()),
+            )
+            .add_system_set(
+                SystemSet::on_exit(AppState::LevelSelectMenu).with_system(cleanup.system()),
+            )
+            .add_system_set(SystemSet::on_enter(AppState::MainTest).with_system(cleanup.system()))
+            .add_system_set(SystemSet::on_exit(AppState::MainTest).with_system(cleanup.system()))
+            .add_system_set(SystemSet::on_enter(AppState::LightTest).with_system(cleanup.system()))
+            .add_system_set(SystemSet::on_exit(AppState::LightTest).with_system(cleanup.system()));
     }
 }
 
@@ -58,6 +63,12 @@ fn cleanup(mut commands: Commands, query: Query<Entity>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
+}
+
+#[derive(Component)]
+enum MenuButton {
+    Play,
+    Quit,
 }
 
 fn setup_main_menu(
@@ -103,7 +114,7 @@ fn setup_main_menu(
         });
 }
 
-fn button_press_system(
+fn button_press_system_main_menu(
     buttons: Query<(&Interaction, &MenuButton), (Changed<Interaction>, With<Button>)>,
     mut state: ResMut<State<AppState>>,
     mut exit: EventWriter<AppExit>,
@@ -111,10 +122,95 @@ fn button_press_system(
     for (interaction, button) in buttons.iter() {
         if *interaction == Interaction::Clicked {
             match button {
-                MenuButton::Play => state
-                    .set(AppState::InGame)
-                    .expect("Couldn't switch state to InGame"),
-                MenuButton::Quit => exit.send(AppExit),
+                MenuButton::Play => {
+                    log::info!("Load level select menu.");
+
+                    state
+                        .set(AppState::LevelSelectMenu)
+                        .expect("Couldn't switch state to SelectLevelMenu")
+                }
+
+                MenuButton::Quit => {
+                    log::info!("Quit from game.");
+
+                    exit.send(AppExit)
+                }
+            };
+        }
+    }
+}
+
+#[derive(Component)]
+enum SelectButton {
+    Main,
+    Light,
+}
+
+fn setup_select_menu(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    materials: Res<self::menu::MenuMaterials>,
+) {
+    commands.spawn_bundle(UiCameraBundle::default());
+
+    commands
+        .spawn_bundle(self::menu::root(&materials))
+        .with_children(|parent| {
+            parent
+                .spawn_bundle(self::menu::border(&materials))
+                .with_children(|parent| {
+                    parent
+                        .spawn_bundle(self::menu::menu_background(&materials))
+                        .with_children(|parent| {
+                            parent
+                                .spawn_bundle(self::menu::button(&materials))
+                                .with_children(|parent| {
+                                    parent.spawn_bundle(self::menu::button_text(
+                                        &asset_server,
+                                        &materials,
+                                        "Main",
+                                    ));
+                                })
+                                .insert(SelectButton::Main);
+                            if !cfg!(target_arch = "wasm32") {
+                                parent
+                                    .spawn_bundle(self::menu::button(&materials))
+                                    .with_children(|parent| {
+                                        parent.spawn_bundle(self::menu::button_text(
+                                            &asset_server,
+                                            &materials,
+                                            "Light",
+                                        ));
+                                    })
+                                    .insert(SelectButton::Light);
+                            }
+                        });
+                });
+        });
+}
+
+fn button_press_system_level_menu(
+    buttons: Query<(&Interaction, &SelectButton), (Changed<Interaction>, With<Button>)>,
+    mut state: ResMut<State<AppState>>,
+) {
+    for (interaction, button) in buttons.iter() {
+        if *interaction == Interaction::Clicked {
+            match button {
+                SelectButton::Main => {
+                    log::info!("Load main test.");
+
+                    state
+                        .set(AppState::MainTest)
+                        .expect("Couldn't switch state to MainTest")
+                }
+
+                SelectButton::Light => {
+                    log::info!("Load light text.");
+
+                    state
+                        .set(AppState::LightTest)
+                        .expect("Couldn't switch state to LightTest")
+                }
             };
         }
     }
