@@ -36,7 +36,7 @@ pub fn root(materials: &Res<MenuMaterials>) -> NodeBundle {
             align_items: AlignItems::Center,
             ..Default::default()
         },
-        color: materials.root.clone(),
+        color: materials.root,
         ..Default::default()
     }
 }
@@ -49,7 +49,7 @@ pub fn button(materials: &Res<MenuMaterials>) -> ButtonBundle {
             align_items: AlignItems::Center,
             ..Default::default()
         },
-        color: materials.button.clone(),
+        color: materials.button,
         ..Default::default()
     }
 }
@@ -59,7 +59,7 @@ pub fn button_text(
     materials: &Res<MenuMaterials>,
     label: &str,
 ) -> TextBundle {
-    return TextBundle {
+    TextBundle {
         style: Style {
             margin: Rect::all(Val::Px(10.0)),
             ..Default::default()
@@ -69,12 +69,12 @@ pub fn button_text(
             TextStyle {
                 font: asset_server.load(assets_paths::fonts::TICKETING),
                 font_size: 30.0,
-                color: materials.button_text.clone(),
+                color: materials.button_text,
             },
             Default::default(),
         ),
         ..Default::default()
-    };
+    }
 }
 
 pub fn button_system(
@@ -83,9 +83,9 @@ pub fn button_system(
 ) {
     for (interaction, mut material) in buttons.iter_mut() {
         match *interaction {
-            Interaction::Clicked => *material = materials.button_pressed.clone(),
-            Interaction::Hovered => *material = materials.button_hovered.clone(),
-            Interaction::None => *material = materials.button.clone(),
+            Interaction::Clicked => *material = materials.button_pressed,
+            Interaction::Hovered => *material = materials.button_hovered,
+            Interaction::None => *material = materials.button,
         }
     }
 }
@@ -100,7 +100,7 @@ pub fn menu_background(materials: &Res<MenuMaterials>) -> NodeBundle {
             padding: Rect::all(Val::Px(5.0)),
             ..Default::default()
         },
-        color: materials.menu.clone(),
+        color: materials.menu,
         ..Default::default()
     }
 }
@@ -112,7 +112,7 @@ pub fn border(materials: &Res<MenuMaterials>) -> NodeBundle {
             border: Rect::all(Val::Px(8.0)),
             ..Default::default()
         },
-        color: materials.border.clone(),
+        color: materials.border,
         ..Default::default()
     }
 }
