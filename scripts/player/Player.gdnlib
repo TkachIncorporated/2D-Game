@@ -8,7 +8,9 @@ reloadable=true
 [entry]
 
 Windows.64="res://scripts/rust/target/release/my_gdnative_lib.dll"
+X11.64="res://scripts/rust/target/debug/libmy_gdnative_lib.so"
 
 [dependencies]
 
 Windows.64=[  ]
+X11.64=[  ]
