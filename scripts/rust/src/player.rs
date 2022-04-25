@@ -6,7 +6,7 @@ use gdnative::{
 use crate::controls::{Direction, KeyboardControls};
 
 const GRAVITY: f32 = 1000.0;
-const MOVEMENT_SPEED: f32 = 5.0;
+const MOVEMENT_SPEED: f32 = 200.0;
 const JUMP_SPEED: f32 = 400.0;
 
 #[derive(NativeClass)]
@@ -17,6 +17,7 @@ pub struct Player {
     is_jumping: bool,
     controls: KeyboardControls,
     velocity: Vector2,
+    sprite: Ref<Sprite>,
 }
 
 #[methods]
@@ -30,12 +31,19 @@ impl Player {
             is_jumping: false,
             controls: KeyboardControls::new(),
             velocity: Vector2::new(0.0, 0.0),
+            sprite: Sprite::new().into_shared(),
         }
     }
 
     #[export]
     fn _ready(&mut self, _owner: &KinematicBody2D) {
         _owner.set_physics_process(true);
+        self.sprite = unsafe {
+            _owner
+                .get_node_as::<Sprite>("Sprite")
+                .expect("There's no Sprite")
+                .assume_shared()
+        };
     }
 
     #[export]
@@ -45,17 +53,18 @@ impl Player {
         if let Some(v) = e.cast::<InputEventKey>() {
             let key_code = v.scancode();
             let value = v.is_pressed();
+            let sprite = unsafe { self.sprite.assume_safe() };
 
             if key_code == GlobalConstants::KEY_A {
                 self.controls.direction = Direction::Left;
                 self.controls.left = value;
-                _owner.get_node("Sprite").set_flip_h(true);
+                sprite.set_flip_h(true);
             }
 
             if key_code == GlobalConstants::KEY_D {
                 self.controls.direction = Direction::Right;
                 self.controls.right = value;
-                _owner.get_node("Sprite").set_flip_h(false);
+                sprite.set_flip_h(false);
             }
 
             if !self.is_jumping && key_code == GlobalConstants::KEY_SPACE {

@@ -1,4 +1,4 @@
-use gdnative::prelude::godot_init;
+use gdnative::init::{godot_gdnative_init, godot_gdnative_terminate, godot_nativescript_init};
 use player::Player;
 
 mod controls;
