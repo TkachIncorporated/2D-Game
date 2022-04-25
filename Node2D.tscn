@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Player.gdns" type="Script" id=1]
 [ext_resource path="res://assets/sprites/Death.png" type="Texture" id=2]
 [ext_resource path="res://assets/sprites/TODO.png" type="Texture" id=3]
+[ext_resource path="res://assets/sprites/Spikes.png" type="Texture" id=4]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 100.5, 10 )
@@ -65,3 +66,9 @@ shape = SubResource( 1 )
 [node name="Sprite" type="Sprite" parent="Player"]
 position = Vector2( 519, 285 )
 texture = ExtResource( 2 )
+
+[node name="Spikes" type="Sprite" parent="."]
+position = Vector2( 515.5, 306 )
+scale = Vector2( 1.07187, 1 )
+z_index = -1
+texture = ExtResource( 4 )
