@@ -1,0 +1,74 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://scripts/player/Player.gdns" type="Script" id=1]
+[ext_resource path="res://assets/sprites/Death.png" type="Texture" id=2]
+[ext_resource path="res://assets/sprites/TODO.png" type="Texture" id=3]
+[ext_resource path="res://assets/sprites/Spikes.png" type="Texture" id=4]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 100.5, 10 )
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 28, 36 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Terrain" type="StaticBody2D" parent="."]
+position = Vector2( 728, 395 )
+
+[node name="Todo2" type="Sprite" parent="Terrain"]
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain"]
+position = Vector2( 0, -0.5 )
+shape = SubResource( 2 )
+
+[node name="Terrain2" type="StaticBody2D" parent="."]
+position = Vector2( 521, 395 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain2"]
+position = Vector2( 0, -0.5 )
+shape = SubResource( 2 )
+
+[node name="Todo" type="Sprite" parent="Terrain2"]
+texture = ExtResource( 3 )
+
+[node name="Terrain3" type="StaticBody2D" parent="."]
+position = Vector2( 312, 394 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain3"]
+position = Vector2( 0.5, 0 )
+shape = SubResource( 2 )
+
+[node name="Todo3" type="Sprite" parent="Terrain3"]
+position = Vector2( 1, 1 )
+texture = ExtResource( 3 )
+
+[node name="Wall" type="StaticBody2D" parent="."]
+position = Vector2( 812, 273 )
+rotation = 1.5708
+scale = Vector2( 0.975, 1.27273 )
+
+[node name="Todo4" type="Sprite" parent="Wall"]
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
+position = Vector2( 0, -0.5 )
+shape = SubResource( 2 )
+
+[node name="Player" type="KinematicBody2D" parent="."]
+script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2( 519, 285 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="Player"]
+position = Vector2( 519, 285 )
+texture = ExtResource( 2 )
+
+[node name="Spikes" type="Sprite" parent="."]
+position = Vector2( 515.5, 306 )
+scale = Vector2( 1.07187, 1 )
+z_index = -1
+texture = ExtResource( 4 )

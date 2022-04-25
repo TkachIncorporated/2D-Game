@@ -1,2 +1,9 @@
-target
-assets/sprites/Photoshop
+# rust
+/scripts/rust/target
+
+# godot
+.mono
+.import
+
+# assets
+/assets/sprites/photoshop

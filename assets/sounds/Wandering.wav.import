@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Wandering.wav-0a5028766952e9ad52c28428d3976908.sample"
+
+[deps]
+
+source_file="res://assets/sounds/Wandering.wav"
+dest_files=[ "res://.import/Wandering.wav-0a5028766952e9ad52c28428d3976908.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
