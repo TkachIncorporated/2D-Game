@@ -1,0 +1,14 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+Windows.64="res://scripts/rust/target/release/my_gdnative_lib.dll"
+
+[dependencies]
+
+Windows.64=[  ]

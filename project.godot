@@ -12,7 +12,22 @@ config_version=4
 
 config/name="Project"
 run/main_scene="res://Node2D.tscn"
-config/icon="res://icon.png"
+
+[autoload]
+
+Player="*res://Player.gdns"
+
+[debug]
+
+settings/stdout/print_fps=true
+
+[gdnative]
+
+singletons=[  ]
+
+[global]
+
+fps=true
 
 [physics]
 
