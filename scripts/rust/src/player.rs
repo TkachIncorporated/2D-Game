@@ -1,7 +1,4 @@
-use gdnative::{
-    api::{CollisionShape2D, GlobalConstants},
-    prelude::*,
-};
+use gdnative::{api::CollisionShape2D, prelude::*};
 
 use crate::controls::{Direction, KeyboardControls};
 
@@ -47,57 +44,26 @@ impl Player {
     }
 
     #[export]
-    fn _input(&mut self, _owner: &KinematicBody2D, event: Ref<InputEvent>) {
-        let e = unsafe { event.assume_safe() };
-
-        if let Some(v) = e.cast::<InputEventKey>() {
-            let key_code = v.scancode();
-            let value = v.is_pressed();
-            let sprite = unsafe { self.sprite.assume_safe() };
-
-            if key_code == GlobalConstants::KEY_A {
-                self.controls.direction = Direction::Left;
-                self.controls.left = value;
-                sprite.set_flip_h(true);
-            }
-
-            if key_code == GlobalConstants::KEY_D {
-                self.controls.direction = Direction::Right;
-                self.controls.right = value;
-                sprite.set_flip_h(false);
-            }
-
-            if !self.is_jumping && key_code == GlobalConstants::KEY_SPACE {
-                self.is_jumping = true;
-                self.controls.jump = value;
-            }
-        };
-    }
-
-    #[export]
     unsafe fn _physics_process(&mut self, _owner: &KinematicBody2D, delta: f64) {
-        if self.controls.left {
+        let input = Input::godot_singleton();
+        let sprite = self.sprite.assume_safe();
+
+        if input.is_action_pressed("move_left", false) {
+            self.controls.direction = Direction::Left;
             self.velocity.x = -MOVEMENT_SPEED;
-        }
-
-        if self.controls.right {
+            sprite.set_flip_h(true);
+        } else if input.is_action_pressed("move_right", false) {
+            self.controls.direction = Direction::Right;
             self.velocity.x = MOVEMENT_SPEED;
-        }
-
-        if self.controls.left == self.controls.right {
+            sprite.set_flip_h(false);
+        } else {
+            self.controls.direction = Direction::None;
             self.velocity.x = 0.0;
         }
 
-        if self.controls.jump && _owner.is_on_floor() {
+        if input.is_action_pressed("jump", false) && _owner.is_on_floor() {
+            self.is_jumping = true;
             self.velocity.y = -JUMP_SPEED;
-        }
-
-        if self.is_jumping && _owner.is_on_floor() {
-            self.is_jumping = false;
-        }
-
-        if self.is_jumping && _owner.is_on_floor() {
-            self.is_jumping = false;
         }
 
         self.velocity.y += GRAVITY * delta as f32;
