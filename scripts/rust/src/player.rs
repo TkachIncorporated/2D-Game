@@ -1,4 +1,4 @@
-use gdnative::{api::CollisionShape2D, prelude::*};
+use gdnative::{api::CollisionShape2D, api::KinematicBody2D, prelude::*};
 
 use crate::controls::{Direction, KeyboardControls};
 
@@ -64,6 +64,10 @@ impl Player {
         if input.is_action_pressed("jump", false) && _owner.is_on_floor() {
             self.is_jumping = true;
             self.velocity.y = -JUMP_SPEED;
+        }
+
+        if input.is_action_pressed("attack", false) {
+            // TODO
         }
 
         self.velocity.y += GRAVITY * delta as f32;
