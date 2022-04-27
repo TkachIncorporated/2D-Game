@@ -6,3 +6,4 @@
 resource_name = "Hello"
 class_name = "Player"
 library = ExtResource( 1 )
+script_class_name = "Player"
