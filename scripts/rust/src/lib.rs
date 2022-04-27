@@ -1,6 +1,7 @@
 use gdnative::init::{godot_gdnative_init, godot_gdnative_terminate, godot_nativescript_init};
 use player::Player;
 
+mod camera;
 mod controls;
 mod player;
 
