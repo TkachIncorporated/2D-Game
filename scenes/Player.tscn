@@ -8,45 +8,47 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 28, 36 )
 
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 34.5, 36 )
+
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 3 ), ExtResource( 4 ) ],
-"loop": true,
-"name": "Attack",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 1 ) ],
 "loop": true,
 "name": "Idle",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "Attack",
+"speed": 5.0
 } ]
-
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 34.5, 36 )
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 2 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+[node name="PlayerCollider" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Scaling" type="Node2D" parent="."]
+
+[node name="AttackArea" type="Area2D" parent="Scaling"]
+
+[node name="AttackCollider" type="CollisionShape2D" parent="Scaling/AttackArea"]
+position = Vector2( 71.5, 0 )
+shape = SubResource( 3 )
+disabled = true
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Scaling"]
 position = Vector2( -28, -36 )
 frames = SubResource( 2 )
 animation = "Idle"
 playing = true
 centered = false
 
-[node name="AttackArea" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
-position = Vector2( 71.5, 0 )
-shape = SubResource( 3 )
-disabled = true
-
-[connection signal="animation_finished" from="AnimatedSprite" to="." method="finished"]
+[connection signal="animation_finished" from="Scaling/AnimatedSprite" to="." method="finished"]

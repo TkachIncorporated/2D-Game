@@ -20,6 +20,7 @@ pub struct Player {
     velocity: Vector2,
     sprite: Ref<AnimatedSprite>,
     attack_collision: Ref<CollisionShape2D>,
+    scaling: Ref<Node2D>,
 }
 
 #[methods]
@@ -36,21 +37,31 @@ impl Player {
             velocity: Vector2::new(0.0, 0.0),
             sprite: AnimatedSprite::new().into_shared(),
             attack_collision: CollisionShape2D::new().into_shared(),
+            scaling: Node2D::new().into_shared(),
         }
     }
 
     #[export]
     fn _ready(&mut self, _owner: TRef<KinematicBody2D>) {
         _owner.set_physics_process(true);
+
         self.sprite = unsafe {
             _owner
-                .get_node_as::<AnimatedSprite>("AnimatedSprite")
+                .get_node_as::<AnimatedSprite>("Scaling/AnimatedSprite")
                 .expect("There's no Sprite")
                 .assume_shared()
         };
+
         self.attack_collision = unsafe {
             _owner
-                .get_node_as::<CollisionShape2D>("AttackArea/CollisionShape2D")
+                .get_node_as::<CollisionShape2D>("Scaling/AttackArea/AttackCollider")
+                .expect("There's no Shape")
+                .assume_shared()
+        };
+
+        self.scaling = unsafe {
+            _owner
+                .get_node_as::<Node2D>("Scaling")
                 .expect("There's no Shape")
                 .assume_shared()
         };
@@ -73,20 +84,21 @@ impl Player {
         let input = Input::godot_singleton();
         let sprite = self.sprite.assume_safe();
         let shape = self.attack_collision.assume_safe();
+        let scale = self.scaling.assume_safe();
 
         if input.is_action_pressed("move_left", false) && !self.is_attacking {
             self.controls.direction = Direction::Left;
             self.velocity.x = -MOVEMENT_SPEED;
             sprite.play("Idle", false);
-            if _owner.scale() != Vector2::new(-1., 1.) {
-                _owner.apply_scale(Vector2 { x: -1., y: 1. });
+            if scale.scale() != Vector2::new(-1., 1.) {
+                scale.set_global_scale(Vector2 { x: -1., y: 1. });
             }
         } else if input.is_action_pressed("move_right", false) && !self.is_attacking {
             self.controls.direction = Direction::Right;
             self.velocity.x = MOVEMENT_SPEED;
             sprite.play("Idle", false);
-            if _owner.scale() != Vector2::new(1., 1.) {
-                _owner.apply_scale(Vector2 { x: -1., y: 1. });
+            if scale.scale() != Vector2::new(1., 1.) {
+                scale.set_global_scale(Vector2 { x: 1., y: 1. });
             }
         } else {
             self.controls.direction = Direction::None;
