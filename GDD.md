@@ -88,6 +88,15 @@ TODO туду
 Фишка локации - много секретных путей, небольших загадок и спрятанных объектов. 
 Моделька местного шрайна-фонтанчика-столика для сохранений - позолоченная, с черепками, можно придумать танцующего скелетика или призрака рядом с ним для интерактивности.
 
+Немного артов для примерного понимания мрачноты концепции, хотя все можно сделать и намного ярче: 
+![nele-diel-painting](https://user-images.githubusercontent.com/80517435/165798542-60f8cb17-f16b-488d-8358-463504b2e193.jpg)
+![n1mja4a4wev41](https://user-images.githubusercontent.com/80517435/165798673-0fd81e6a-535b-45d2-a0c3-7e696e0b227a.png)
+![46154feead7abfcac6df671c31b9cf919bac3112-620x300](https://user-images.githubusercontent.com/80517435/165798967-4e335ea2-92db-4a9e-b36a-535634ca4002.jpg)
+![darkest-dungeon-viscount-boss-dungeons-dragons-baron-png-favpng-PwN0eq82XNSLuVkBYTvcELy6s](https://user-images.githubusercontent.com/80517435/165799778-3f9047e9-7dc3-4ade-8b83-4e0a3534352b.jpg)
+![268-2683557_image-darkest-dungeon-crimson-court-enemies](https://user-images.githubusercontent.com/80517435/165800277-1806c872-6f34-4fb3-bd79-bfc8072e8bec.png)
+
+
+
 ### Враги
 Враги должны быть сделаны в основном так, чтобы бесить игрока. Чтобы он убивал врага и ощущал над ним превосходство, чтобы ему нравилось заниматься тем, чем он занимается.
 
