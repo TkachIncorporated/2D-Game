@@ -1,4 +1,4 @@
-extends KinematicBody2D
+extends "res://scripts/enemy/Being.gd"
 
 onready var sprite = $Scaling/AnimatedSprite
 
@@ -12,12 +12,7 @@ var is_attacking = false;
 func _ready():
 	pass 
 	
-func _physics_process(delta):
-	var horizont = (
-		Input.get_action_strength("move_right")
-		- Input.get_action_strength("move_left")
-	)
-	
+func _process(delta):
 	if Input.is_action_pressed("move_right") && !is_attacking:
 		velocity.x = MOVEMENT_SPEED
 		sprite.play("Idle")

@@ -35,7 +35,7 @@ func set_destination(dest):
 	stands = false
 	
 func search_for_target():
-	var pl = get_parent().get_parent().get_child(0)
+	var pl = get_parent().get_child(0)
 	if position.distance_to(pl.position) < 200:
 		cancel_move()
 		target = pl
@@ -82,4 +82,8 @@ func _on_HitBox_area_entered(area: Area2D) -> void:
 func _on_AttackArea_area_exited(area: Area2D) -> void:
 	if area.get_parent() == target:
 		target_intercepted = false	
+	pass # Replace with function body.
+
+
+func _on_Timer_timeout():
 	pass # Replace with function body.

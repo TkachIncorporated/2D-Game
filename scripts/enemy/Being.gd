@@ -1,6 +1,5 @@
 extends KinematicBody2D
 
-
 var speed = 200
 
 onready var hp = 50
@@ -21,3 +20,4 @@ func reduce_hp(val):
 	self.hp-=val
 	print("bite")
 	update_hp()
+	print(self.hp)
