@@ -13,6 +13,10 @@ func set_start_hp(hp, max_hp):
 func update_hp():
 	$HP_bar.value=hp
 
+func _process(_delta):
+	if self.hp == 0:
+		self.queue_free()
+
 func _ready() -> void:
 	pass # Replace with function body.
 
