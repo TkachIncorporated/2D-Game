@@ -29,7 +29,7 @@ settings/stdout/print_fps=true
 
 [gdnative]
 
-singletons=[ "res://scripts/player/Player.gdnlib" ]
+singletons=[  ]
 
 [global]
 
