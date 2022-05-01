@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/enemy/Being.gd" type="Script" id=2]
+
+[node name="Being" type="KinematicBody2D"]
+script = ExtResource( 2 )
+
+[node name="Scaling" type="Node2D" parent="."]
+
+[node name="AttackArea" type="Area2D" parent="Scaling"]
+
+[node name="HitBox" type="Area2D" parent="Scaling"]
+
+[node name="HP_bar" type="TextureProgress" parent="."]
+margin_left = -43.0
+margin_top = 56.0
+margin_right = 43.0
+margin_bottom = 66.0
+value = 50.0
+
+[node name="BiteTimer" type="Timer" parent="."]
+
+[connection signal="area_entered" from="Scaling/AttackArea" to="." method="_on_AttackArea_area_entered"]
+[connection signal="area_exited" from="Scaling/AttackArea" to="." method="_on_AttackArea_area_exited"]
+[connection signal="area_entered" from="Scaling/HitBox" to="." method="_on_HitBox_area_entered"]
+[connection signal="timeout" from="BiteTimer" to="." method="_on_BiteTimer_timeout"]
