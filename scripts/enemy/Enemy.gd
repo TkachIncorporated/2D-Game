@@ -47,9 +47,8 @@ func set_destination(dest):
 	stands = false
 	
 
-func _on_BiteTimer_timeout() -> void:
+func _on_BiteTimer_timeout():
 	can_bite = true
-	pass
 
 func _on_DetectionArea_area_entered(area: Area2D) -> void:
 	if area.get_parent().get_parent().name == target_name:
@@ -69,7 +68,9 @@ func _on_DetectionArea_area_exited(area: Area2D) -> void:
 func _on_AttackArea_area_entered(area: Area2D) -> void:
 	if area.get_parent().get_parent() == target:
 		target_intercepted = true	
-	pass # Replace with function body.
+	
+	if area.is_in_group("Weapon"):
+		reduce_hp(area.get_parent().get_parent().DAMAGE)
 
 
 func _on_AttackArea_area_exited(area: Area2D) -> void:
