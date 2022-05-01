@@ -16,9 +16,8 @@ func bite(targ):
 	can_bite = false
 	$BiteTimer.start(1)
 	
-func _ready() -> void:
-	self.hp = 90
-	set_start_hp(self.hp,self.max_hp)
+func _ready():
+	set_start_hp(self.hp, self.max_hp)
 	
 func _process(delta):
 	if velocity:
@@ -65,26 +64,20 @@ func wander():
 		elif pos.distance_to(prev_pos)<=2:
 			cancel_move()
 			
-func _on_StandTimer_timeout() -> void:	
+func _on_StandTimer_timeout():	
 	stands = true
-	pass
 
-func _on_BiteTimer_timeout() -> void:
+func _on_BiteTimer_timeout():
 	can_bite = true
-	pass
 
-
-func _on_HitBox_area_entered(area: Area2D) -> void:
+func _on_HitBox_area_entered(area: Area2D):
 	if area.get_parent() == target:
 		target_intercepted = true	
-	pass # Replace with function body.
+	
+	if area.is_in_group("Weapon"):
+		reduce_hp(area.get_parent().get_parent().DAMAGE)
 
 
-func _on_AttackArea_area_exited(area: Area2D) -> void:
+func _on_AttackArea_area_exited(area: Area2D):
 	if area.get_parent() == target:
 		target_intercepted = false	
-	pass # Replace with function body.
-
-
-func _on_Timer_timeout():
-	pass # Replace with function body.
