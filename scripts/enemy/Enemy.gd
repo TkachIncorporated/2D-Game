@@ -7,6 +7,7 @@ var prev_pos = Vector2()
 
 var target = null
 
+
 var target_intercepted = false
 var can_bite = true
 
