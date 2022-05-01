@@ -4,7 +4,7 @@
 [ext_resource path="res://scenes/Terrain_01.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Background.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/sounds/restfull.mp3" type="AudioStream" id=4]
-[ext_resource path="res://scenes/Enemy.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/Bat.tscn" type="PackedScene" id=5]
 
 [node name="Main" type="Node2D"]
 
@@ -17,13 +17,22 @@ autoplay = true
 [node name="Ground" type="Node" parent="."]
 
 [node name="Terrain_01" parent="Ground" instance=ExtResource( 2 )]
-position = Vector2( 541, 100 )
+position = Vector2( 555, 104 )
+
+[node name="Terrain_01" parent="Ground/Terrain_01" instance=ExtResource( 2 )]
+position = Vector2( -4, -199 )
+
+[node name="Terrain_01" parent="Ground/Terrain_01/Terrain_01" instance=ExtResource( 2 )]
+position = Vector2( 195, -1 )
+
+[node name="Terrain_02" parent="Ground/Terrain_01" instance=ExtResource( 2 )]
+position = Vector2( 390, -199 )
 
 [node name="Terrain_02" parent="Ground" instance=ExtResource( 2 )]
 position = Vector2( 824, 100 )
 
 [node name="Terrain_03" parent="Ground" instance=ExtResource( 2 )]
-position = Vector2( 230, 100 )
+position = Vector2( 244, 99 )
 
 [node name="Terrain_04" parent="Ground" instance=ExtResource( 2 )]
 position = Vector2( 1104, 100 )
@@ -51,5 +60,5 @@ offset = Vector2( 640, 0 )
 transform = Transform2D( 1, 0, 0, 1, 640, 0 )
 scroll_ignore_camera_zoom = true
 
-[node name="Player2" parent="." instance=ExtResource( 5 )]
-position = Vector2( -366, 33 )
+[node name="Bat" parent="." instance=ExtResource( 5 )]
+position = Vector2( 306, 58 )
