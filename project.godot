@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Project"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/menus/MainMenu.tscn"
 
 [debug]
 
