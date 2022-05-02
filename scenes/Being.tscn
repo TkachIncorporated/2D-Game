@@ -17,8 +17,6 @@ margin_top = 56.0
 margin_right = 43.0
 margin_bottom = 66.0
 value = 50.0
-texture_under = ExtResource( 6 )
-texture_progress = ExtResource( 5 )
 
 [node name="BiteTimer" type="Timer" parent="."]
 
