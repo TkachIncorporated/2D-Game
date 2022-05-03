@@ -1,16 +1,31 @@
 extends "res://scripts/enemy/Enemy.gd"
 
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
+	self.speed = 700
+	self.hp = 100
+	set_start_hp(self.hp,self.max_hp)
+	
+func _process(delta):
+	base_attack()
+	death_check()
+	if not target_obviously:
+		$Collider123.disabled = false
+		velocity.y -= GRAVITY * delta;	
+		velocity = move_and_slide(velocity, Vector2.UP)
+	else:
+		$Collider123.disabled = true
+	
+func base_attack():
+	if velocity:
+		prev_pos = position
+		move_and_slide(velocity)
+	
+	if target_intercepted and can_bite:
+		bite(target)
+		
+	if target_obviously and can_attack:
+		can_attack = false
+		$AttackTimer.start(5)
+		set_destination(target.position)
+	

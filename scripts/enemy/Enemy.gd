@@ -10,28 +10,8 @@ var can_bite = true
 var target_obviously = false
 var can_attack = true
 
-func _ready() -> void:
-	self.speed = 700
-	self.hp = 90
-	set_start_hp(self.hp,self.max_hp)
-	
-func _process(delta):
-	base_attack()
-	death_check()
-	
-func base_attack():
-	if velocity:
-		prev_pos = position
-		move_and_slide(velocity)
-	
-	if target_intercepted and can_bite:
-		bite(target)
-		
-	if target_obviously and can_attack:
-		can_attack = false
-		$AttackTimer.start(5)
-		set_destination(target.position)
-	
+const GRAVITY = 1000
+
 func bite(targ):
 	targ.reduce_hp(bite_strength)
 	can_bite = false
@@ -52,14 +32,14 @@ func _on_BiteTimer_timeout() -> void:
 	pass
 
 func _on_DetectionArea_area_entered(area: Area2D) -> void:
-	if area.get_parent().get_parent().name == target_name:
+	if area.is_in_group("Player"):
 		target = area.get_parent().get_parent()
 		target_obviously = true
 		set_destination(target.position)
 	pass # Replace with function body.
 
 func _on_DetectionArea_area_exited(area: Area2D) -> void:
-	if area.get_parent().get_parent() == target:
+	if area.is_in_group("Player"):
 		target_obviously = false
 		$TimerSearch.start(4)
 		velocity=-velocity
@@ -67,20 +47,18 @@ func _on_DetectionArea_area_exited(area: Area2D) -> void:
 
 
 func _on_AttackArea_area_entered(area: Area2D) -> void:
-	if area.get_parent().get_parent() == target:
+	if area.is_in_group("Player"):
 		target_intercepted = true	
 	pass # Replace with function body.
 
 
 func _on_AttackArea_area_exited(area: Area2D) -> void:
-	if area.get_parent().get_parent() == target:
+	if area.is_in_group("Player"):
 		target_intercepted = false	
 	pass # Replace with function body.
 
 func _on_HitBox_area_entered(area: Area2D) -> void:
-	print("2")
 	if area.is_in_group("Weapon"):
-		print("wdqd")
 		reduce_hp(area.get_parent().get_parent().DAMAGE)
 		
 func _on_AttackTimer_timeout() -> void:
@@ -89,5 +67,6 @@ func _on_AttackTimer_timeout() -> void:
 
 
 func _on_TimerSearch_timeout() -> void:
+	target_obviously = false
 	cancel_move()
 	pass # Replace with function body.

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://scenes/Being.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/Enemy/Being.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/player/Player.gd" type="Script" id=2]
 [ext_resource path="res://assets/sprites/Death.png" type="Texture" id=3]
 [ext_resource path="res://assets/sprites/attack_00.png" type="Texture" id=4]
@@ -11,14 +11,14 @@ extents = Vector2( 30.5, 32 )
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
-"loop": false,
-"name": "Attack",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "Idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": false,
+"name": "Attack",
 "speed": 5.0
 } ]
 
@@ -44,6 +44,8 @@ frames = SubResource( 2 )
 animation = "Idle"
 playing = true
 centered = false
+
+[node name="HitBox" parent="Scaling" index="2" groups=["Player"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Scaling/HitBox" index="0"]
 position = Vector2( 1, -0.5 )
