@@ -71,7 +71,7 @@ impl Inventory {
         let grid = unsafe { self.grid.assume_safe() };
 
         for child in &grid.get_children() {
-            let child = child.to_object::<Node2D>().expect("Texture not exist");
+            let child = child.to_object::<Node>().expect("Child not exist");
             grid.remove_child(child);
             unsafe { child.assume_safe().queue_free() }
         }
