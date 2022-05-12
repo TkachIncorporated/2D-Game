@@ -9,12 +9,18 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "CanvasLayer",
+"class": "Inventory",
+"language": "NativeScript",
+"path": "res://Inventory.gdns"
+}, {
 "base": "",
 "class": "Player",
 "language": "NativeScript",
 "path": "res://scripts/player/Player.gdns"
 } ]
 _global_script_class_icons={
+"Inventory": "",
 "Player": ""
 }
 
