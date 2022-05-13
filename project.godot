@@ -9,12 +9,12 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "CanvasLayer",
+"base": "",
 "class": "Inventory",
 "language": "NativeScript",
 "path": "res://scripts/inventory/Inventory.gdns"
 }, {
-"base": "",
+"base": "KinematicBody2D",
 "class": "Player",
 "language": "NativeScript",
 "path": "res://scripts/player/Player.gdns"
