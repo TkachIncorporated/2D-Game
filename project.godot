@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "",
 "class": "Inventory",
 "language": "NativeScript",
-"path": "res://Inventory.gdns"
+"path": "res://scripts/inventory/Inventory.gdns"
 }, {
 "base": "",
 "class": "Player",
