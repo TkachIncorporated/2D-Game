@@ -7,7 +7,8 @@ const JUMP_SPEED = 400
 const GRAVITY = 1000
 
 var velocity = Vector2.ZERO
-var is_attacking = false;
+var is_attacking = false
+var inventory = false
 
 func _ready():
 	pass 
@@ -40,6 +41,14 @@ func _process(delta):
 		sprite.play("Attack")
 		$Scaling/AttackArea/AttackCollider.disabled = false
 		is_attacking = true
+		$Inventory.add_item("Slime", 1)
+	
+	if Input.is_action_just_pressed("ui_home") and not inventory:
+			$Inventory.show()
+			inventory=true
+	elif Input.is_action_just_pressed("ui_home"):
+			$Inventory.hide()
+			inventory=false
 	
 
 func _on_AnimatedSprite_animation_finished():
