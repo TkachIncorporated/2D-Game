@@ -2,4 +2,4 @@ rd_enabled = true
 fleet_id = "cbf31794-44df-49ef-a7ae-dc88d57c2ee3"
 
 [build]
-sccache = "/home/vovchick/.cargo/bin/sccache"
+sccache = "C:\\Users\\Maxim\\.cargo\\bin\\sccache.exe"

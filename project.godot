@@ -9,12 +9,12 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "CanvasLayer",
+"base": "",
 "class": "Inventory",
 "language": "NativeScript",
 "path": "res://scripts/inventory/Inventory.gdns"
 }, {
-"base": "",
+"base": "KinematicBody2D",
 "class": "Player",
 "language": "NativeScript",
 "path": "res://scripts/player/Player.gdns"
@@ -27,7 +27,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Project"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/menus/MainMenu.tscn"
 
 [debug]
 
@@ -80,4 +80,5 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"
