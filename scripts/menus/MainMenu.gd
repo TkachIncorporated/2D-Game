@@ -1,8 +1,5 @@
 extends Control
 
-func _ready():
-	$VBoxContainer/Start.grab_focus()
-
 func _on_Start_pressed():
 	var _scene = get_tree().change_scene("res://scenes/Main.tscn")
 

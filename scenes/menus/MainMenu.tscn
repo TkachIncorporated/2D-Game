@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/mainmenu/MainMenu.gd" type="Script" id=1]
+[ext_resource path="res://scripts/menus/MainMenu.gd" type="Script" id=1]
 [ext_resource path="res://themes/button.tres" type="Theme" id=2]
 [ext_resource path="res://assets/sprites/MainMenu.png" type="Texture" id=3]
 
@@ -19,9 +19,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -44.0
-margin_top = -41.5
+margin_top = -28.0
 margin_right = 44.0
-margin_bottom = 41.5
+margin_bottom = 28.0
 theme = ExtResource( 2 )
 
 [node name="Start" type="Button" parent="VBoxContainer"]
@@ -30,25 +30,17 @@ margin_bottom = 25.0
 focus_neighbour_top = NodePath("../Exit")
 text = "Start"
 
-[node name="Controls" type="Button" parent="VBoxContainer"]
+[node name="Exit" type="Button" parent="VBoxContainer"]
 margin_top = 29.0
 margin_right = 88.0
 margin_bottom = 54.0
-focus_neighbour_bottom = NodePath("../Exit")
-text = "Controls"
-
-[node name="Exit" type="Button" parent="VBoxContainer"]
-margin_top = 58.0
-margin_right = 88.0
-margin_bottom = 83.0
 focus_neighbour_bottom = NodePath("../Start")
 text = "Exit"
 
 [node name="MainMenu" type="Sprite" parent="."]
-position = Vector2( 510, 300 )
+position = Vector2( 510, 286 )
 z_index = -1
 texture = ExtResource( 3 )
 
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_Start_pressed"]
-[connection signal="pressed" from="VBoxContainer/Controls" to="." method="_on_Controls_pressed"]
 [connection signal="pressed" from="VBoxContainer/Exit" to="." method="_on_Exit_pressed"]
