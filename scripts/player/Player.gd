@@ -28,7 +28,6 @@ func _process(delta):
 		if !is_attacking:
 			sprite.play("Idle")
 
-<<<<<<< HEAD
 	var is_jumping = Input.is_action_just_pressed("jump") and is_on_floor()
 	
 	if Input.is_action_just_pressed("jump") && is_jumping:
@@ -42,20 +41,6 @@ func _process(delta):
 		$Scaling/AttackArea/AttackCollider.disabled = false
 		is_attacking = true
 	
-=======
-		var is_jumping = Input.is_action_just_pressed("jump") and is_on_floor()
-		
-		if Input.is_action_just_pressed("jump") && is_jumping:
-			velocity.y = -JUMP_SPEED
-		
-		velocity.y += GRAVITY * delta;
-		velocity = move_and_slide(velocity, Vector2.UP)
-		
-		if Input.is_action_pressed("attack"):
-			sprite.play("Attack")
-			$Scaling/AttackArea/AttackCollider.disabled = false
-			is_attacking = true
->>>>>>> fa6077e (working menu system)
 
 func _on_AnimatedSprite_animation_finished():
 	if sprite.animation == "Attack":

@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/sprites/Death.png" type="Texture" id=1]
 [ext_resource path="res://scripts/enemy/Being.gd" type="Script" id=2]
 [ext_resource path="res://assets/sprites/attack_00.png" type="Texture" id=3]
 [ext_resource path="res://assets/sprites/attack_01.png" type="Texture" id=4]
-=======
-[gd_scene load_steps=4 format=2]
-
-[ext_resource path="res://assets/sprites/healthbar/under.png" type="Texture" id=1]
-[ext_resource path="res://scripts/enemy/Being.gd" type="Script" id=2]
-[ext_resource path="res://assets/sprites/healthbar/hp.png" type="Texture" id=3]
->>>>>>> 9a2a900 (add hp bars)
 
 [sub_resource type="SpriteFrames" id=4]
 animations = [ {
@@ -57,8 +49,6 @@ margin_top = 56.0
 margin_right = 43.0
 margin_bottom = 66.0
 value = 50.0
-texture_under = ExtResource( 1 )
-texture_progress = ExtResource( 3 )
 
 [node name="HitBox" type="Area2D" parent="."]
 
