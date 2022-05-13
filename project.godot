@@ -12,9 +12,9 @@ _global_script_classes=[ {
 "base": "CanvasLayer",
 "class": "Inventory",
 "language": "NativeScript",
-"path": "res://Inventory.gdns"
+"path": "res://scripts/inventory/Inventory.gdns"
 }, {
-"base": "KinematicBody2D",
+"base": "",
 "class": "Player",
 "language": "NativeScript",
 "path": "res://scripts/player/Player.gdns"
