@@ -13,15 +13,9 @@ _global_script_classes=[ {
 "class": "Inventory",
 "language": "NativeScript",
 "path": "res://scripts/inventory/Inventory.gdns"
-}, {
-"base": "",
-"class": "Player",
-"language": "NativeScript",
-"path": "res://scripts/player/Player.gdns"
 } ]
 _global_script_class_icons={
-"Inventory": "",
-"Player": ""
+"Inventory": ""
 }
 
 [application]
