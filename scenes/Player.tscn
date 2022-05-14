@@ -4,21 +4,36 @@
 [ext_resource path="res://scripts/player/Player.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 28, 36 )
+extents = Vector2( 40, 104 )
 
 [node name="Player" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
+[node name="AnimatedSprite" parent="Scaling" index="0"]
+position = Vector2( 0, -32 )
+offset = Vector2( -81, -145 )
+
 [node name="AttackCollider" parent="Scaling/AttackArea" index="0"]
-position = Vector2( 65.5, 0 )
+position = Vector2( 111, 0 )
 
 [node name="Camera2D" type="Camera2D" parent="." index="1"]
 current = true
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 
+[node name="HP_bar" parent="." index="2"]
+margin_left = -45.0
+margin_top = -78.0
+margin_right = 41.0
+margin_bottom = -68.0
+
+[node name="HitBox" parent="." index="3"]
+position = Vector2( 0, -32 )
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+position = Vector2( 0, 32 )
+
 [node name="PlayerCollider" type="CollisionShape2D" parent="." index="4"]
-position = Vector2( 0.5, 0 )
 shape = SubResource( 1 )
 
 [connection signal="animation_finished" from="Scaling/AnimatedSprite" to="." method="_on_AnimatedSprite_animation_finished"]

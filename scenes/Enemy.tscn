@@ -4,21 +4,30 @@
 [ext_resource path="res://scripts/enemy/Enemy.gd" type="Script" id=2]
 
 [sub_resource type="CircleShape2D" id=2]
-radius = 80.0062
+radius = 232.0
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 27.5, 36 )
+extents = Vector2( 39.5, 100 )
 
 [node name="Player" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+
+[node name="AnimatedSprite" parent="Scaling" index="0"]
+position = Vector2( 0, -16 )
+offset = Vector2( -76, -161 )
 
 [node name="AttackCollider" parent="Scaling/AttackArea" index="0"]
 position = Vector2( 0, 0 )
 shape = SubResource( 2 )
 disabled = false
 
+[node name="HP_bar" parent="." index="1"]
+margin_left = -48.0
+margin_top = -112.0
+margin_right = 48.0
+margin_bottom = -102.0
+
 [node name="CollisionShape2D" parent="HitBox" index="0"]
-position = Vector2( 0, 0 )
 shape = SubResource( 1 )
 
 [node name="StandTimer" type="Timer" parent="." index="3"]

@@ -1,28 +1,26 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://assets/sprites/Death.png" type="Texture" id=1]
+[ext_resource path="res://assets/sprites/olgerd.png" type="Texture" id=1]
 [ext_resource path="res://scripts/enemy/Being.gd" type="Script" id=2]
-[ext_resource path="res://assets/sprites/attack_00.png" type="Texture" id=3]
-[ext_resource path="res://assets/sprites/attack_01.png" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=4]
 animations = [ {
 "frames": [ ExtResource( 1 ) ],
 "loop": true,
-"name": "Idle",
+"name": "Attack",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 3 ), ExtResource( 4 ) ],
+"frames": [ ExtResource( 1 ) ],
 "loop": true,
-"name": "Attack",
+"name": "Idle",
 "speed": 5.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 30.5, 36 )
+extents = Vector2( 56, 96 )
 
 [sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 27.5, 36 )
+extents = Vector2( 40, 104 )
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 2 )
@@ -30,28 +28,28 @@ script = ExtResource( 2 )
 [node name="Scaling" type="Node2D" parent="."]
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Scaling"]
-position = Vector2( -28, -36 )
+position = Vector2( 0, -24 )
 frames = SubResource( 4 )
 animation = "Idle"
 playing = true
 centered = false
+offset = Vector2( -80, -152 )
 
 [node name="AttackArea" type="Area2D" parent="Scaling"]
 
 [node name="AttackCollider" type="CollisionShape2D" parent="Scaling/AttackArea"]
-position = Vector2( 71.5, 0 )
+position = Vector2( 112, 0 )
 shape = SubResource( 3 )
 disabled = true
 
 [node name="HP_bar" type="TextureProgress" parent="."]
-margin_left = -43.0
-margin_top = 56.0
-margin_right = 43.0
-margin_bottom = 66.0
+margin_left = -40.0
+margin_top = -120.0
+margin_right = 46.0
+margin_bottom = -110.0
 value = 50.0
 
 [node name="HitBox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
-position = Vector2( 0.5, 0 )
 shape = SubResource( 5 )
