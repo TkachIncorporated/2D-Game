@@ -64,7 +64,7 @@ func wander():
 		elif pos.distance_to(prev_pos)<=2:
 			cancel_move()
 			
-func _on_StandTimer_timeout() -> void:	
+func _on_StandTimer_timeout():
 	stands = true
 	pass
 
